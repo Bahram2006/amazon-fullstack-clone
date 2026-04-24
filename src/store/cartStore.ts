@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type Product = {
   title: string;
@@ -15,48 +16,57 @@ type CartStore = {
   decreaseQty: (index: number) => void;
 };
 
-export const useCartStore = create<CartStore>((set) => ({
-  items: [],
+export const useCartStore = create<CartStore>()(
+  persist(
+    (set) => ({
+      items: [],
 
-  addToCart: (product) =>
-    set((state) => {
-      const existing = state.items.find(
-        (item) => item.title === product.title
-      );
+      addToCart: (product) =>
+        set((state) => {
+          const existing = state.items.find(
+            (item) => item.title === product.title
+          );
 
-      if (existing) {
-        return {
-          items: state.items.map((item) =>
-            item.title === product.title
-              ? { ...item, quantity: item.quantity + 1 }
-              : item
+          if (existing) {
+            return {
+              items: state.items.map((item) =>
+                item.title === product.title
+                  ? { ...item, quantity: item.quantity + 1 }
+                  : item
+              ),
+            };
+          }
+
+          return {
+            items: [...state.items, { ...product, quantity: 1 }],
+          };
+        }),
+
+      removeFromCart: (index) =>
+        set((state) => ({
+          items: state.items.filter((_, i) => i !== index),
+        })),
+
+      increaseQty: (index) =>
+        set((state) => ({
+          items: state.items.map((item, i) =>
+            i === index ? { ...item, quantity: item.quantity + 1 } : item
           ),
-        };
-      }
+        })),
 
-      return {
-        items: [...state.items, { ...product, quantity: 1 }],
-      };
+      decreaseQty: (index) =>
+        set((state) => ({
+          items: state.items
+            .map((item, i) =>
+              i === index
+                ? { ...item, quantity: item.quantity - 1 }
+                : item
+            )
+            .filter((item) => item.quantity > 0),
+        })),
     }),
-
-  removeFromCart: (index) =>
-    set((state) => ({
-      items: state.items.filter((_, i) => i !== index),
-    })),
-
-  increaseQty: (index) =>
-    set((state) => ({
-      items: state.items.map((item, i) =>
-        i === index ? { ...item, quantity: item.quantity + 1 } : item
-      ),
-    })),
-
-  decreaseQty: (index) =>
-    set((state) => ({
-      items: state.items
-        .map((item, i) =>
-          i === index ? { ...item, quantity: item.quantity - 1 } : item
-        )
-        .filter((item) => item.quantity > 0),
-    })),
-}));
+    {
+      name: "cart-storage", // localStorage key
+    }
+  )
+);
