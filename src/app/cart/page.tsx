@@ -4,6 +4,7 @@ import { useCartStore } from "../../store/cartStore";
 
 export default function CartPage() {
   const items = useCartStore((state) => state.items);
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
 
   const total = items.reduce((acc, item) => acc + item.price, 0);
 
@@ -11,7 +12,7 @@ export default function CartPage() {
     <div className="bg-gray-100 min-h-screen p-6">
       <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
 
-        {/* LEFT - ITEMS */}
+        {/* LEFT */}
         <div className="md:col-span-2 bg-white p-4 rounded-md">
           <h1 className="text-2xl font-bold mb-4">Shopping Cart</h1>
 
@@ -20,8 +21,20 @@ export default function CartPage() {
           ) : (
             <div className="space-y-4">
               {items.map((item, i) => (
-                <div key={i} className="flex justify-between border-b pb-2">
-                  <p>{item.title}</p>
+                <div
+                  key={i}
+                  className="flex justify-between items-center border-b pb-2"
+                >
+                  <div>
+                    <p>{item.title}</p>
+                    <button
+                      onClick={() => removeFromCart(i)}
+                      className="text-red-500 text-sm hover:underline"
+                    >
+                      Remove
+                    </button>
+                  </div>
+
                   <p className="font-semibold">${item.price}</p>
                 </div>
               ))}
@@ -29,7 +42,7 @@ export default function CartPage() {
           )}
         </div>
 
-        {/* RIGHT - SUMMARY */}
+        {/* RIGHT */}
         <div className="bg-white p-4 rounded-md h-fit">
           <h2 className="text-lg font-bold mb-4">Subtotal</h2>
 
