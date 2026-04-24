@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
+import { useCartStore } from "../../store/cartStore";
+
+const items = useCartStore((state) => state.items);
 
 export default function Navbar() {
   return (
@@ -43,7 +46,7 @@ export default function Navbar() {
 
             <div className="flex items-center gap-1 cursor-pointer">
               <ShoppingCart size={26} />
-              <span className="font-bold">0</span>
+              <span className="font-bold">{items.length}</span>
             </div>
 
           </div>

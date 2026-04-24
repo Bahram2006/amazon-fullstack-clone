@@ -1,3 +1,7 @@
+import { useCartStore } from "../../store/cartStore";
+
+const addToCart = useCartStore((state) => state.addToCart);
+
 type Props = {
   title: string;
   price: number;
@@ -39,9 +43,12 @@ export default function ProductCard({
       <p className="font-bold text-lg mb-4">${price}</p>
 
       {/* Button */}
-      <button className="mt-auto bg-yellow-400 hover:bg-yellow-500 text-sm py-2 rounded">
-        Add to Cart
-      </button>
+      <button
+  onClick={() => addToCart({ title, price, image })}
+  className="mt-auto bg-yellow-400 hover:bg-yellow-500 text-sm py-2 rounded"
+>
+  Add to Cart
+</button>
     </div>
   );
 }
