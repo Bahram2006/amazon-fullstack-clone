@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useCartStore } from "../../../store/cartStore";
+import { useCartStore } from "../../../../store/cartStore";
 
 const products = [
   {
