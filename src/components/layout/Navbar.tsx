@@ -4,9 +4,10 @@ import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 import { useCartStore } from "../../store/cartStore";
 
-const items = useCartStore((state) => state.items);
+
 
 export default function Navbar() {
+    const items = useCartStore((state) => state.items);
   return (
     <header className="w-full">
       
