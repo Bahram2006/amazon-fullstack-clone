@@ -1,6 +1,7 @@
 "use client";
 
 import { useCartStore } from "../../store/cartStore";
+import Link from "next/link";
 
 type Props = {
   title: string;
