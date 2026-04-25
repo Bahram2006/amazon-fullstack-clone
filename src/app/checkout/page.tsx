@@ -1,15 +1,47 @@
 "use client";
 
 import { useCartStore } from "../../store/cartStore";
+import { useOrderStore } from "../../store/orderStore";
 import ProtectedRoute from "../../components/auth/ProtectedRoute";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function CheckoutPage() {
   const items = useCartStore((state) => state.items);
+  const clearCart = useCartStore((state) => state.clearCart);
 
-  const total = items.reduce(
+  const addOrder = useOrderStore((state) => state.addOrder);
+  const router = useRouter();
+
+  // FORM STATE
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+
+  const totalItems = items.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  );
+
+  const totalPrice = items.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
+
+  const handleOrder = () => {
+    if (!items.length || !name || !address || !city) return;
+
+    addOrder({
+      id: Date.now().toString(),
+      items,
+      total: totalPrice,
+      date: new Date().toLocaleString(),
+    });
+
+    clearCart();
+
+    router.push("/orders");
+  };
 
   return (
     <ProtectedRoute>
@@ -24,14 +56,22 @@ export default function CheckoutPage() {
 
             <input
               placeholder="Full Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="w-full mb-3 px-3 py-2 border rounded"
             />
+
             <input
               placeholder="Address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
               className="w-full mb-3 px-3 py-2 border rounded"
             />
+
             <input
               placeholder="City"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
               className="w-full mb-3 px-3 py-2 border rounded"
             />
           </div>
@@ -43,14 +83,18 @@ export default function CheckoutPage() {
             </h2>
 
             <p className="mb-2">
-              Items: {items.length}
+              Items: {totalItems}
             </p>
 
             <p className="mb-4 font-bold">
-              Total: ${total}
+              Total: ${totalPrice}
             </p>
 
-            <button className="w-full bg-yellow-400 py-2 rounded font-semibold">
+            <button
+              onClick={handleOrder}
+              disabled={!items.length}
+              className="w-full bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-300 py-2 rounded font-semibold"
+            >
               Place Order
             </button>
           </div>
