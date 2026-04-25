@@ -2,19 +2,24 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useAuthStore } from "../../../store/authStore";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = () => {
-    console.log("Login:", email, password);
+    login(email);
+    router.push("/");
   };
+
+  const login = useAuthStore((state) => state.login);
+  const router = useRouter();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-6 rounded-md w-[350px] shadow">
-
         <h1 className="text-2xl font-bold mb-4">Sign In</h1>
 
         <input
@@ -44,7 +49,6 @@ export default function LoginPage() {
             Register
           </Link>
         </p>
-
       </div>
     </div>
   );
