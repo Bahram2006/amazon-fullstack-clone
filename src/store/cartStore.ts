@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type Product = {
+type CartItem = {
   title: string;
   price: number;
   image: string;
@@ -9,11 +9,14 @@ type Product = {
 };
 
 type CartStore = {
-  items: Product[];
-  addToCart: (product: Omit<Product, "quantity">) => void;
+  items: CartItem[];
+
+  addToCart: (item: Omit<CartItem, "quantity">) => void;
   removeFromCart: (index: number) => void;
   increaseQty: (index: number) => void;
   decreaseQty: (index: number) => void;
+
+  clearCart: () => void; // ✅ goşduk
 };
 
 export const useCartStore = create<CartStore>()(
@@ -21,24 +24,24 @@ export const useCartStore = create<CartStore>()(
     (set) => ({
       items: [],
 
-      addToCart: (product) =>
+      addToCart: (item) =>
         set((state) => {
           const existing = state.items.find(
-            (item) => item.title === product.title
+            (i) => i.title === item.title
           );
 
           if (existing) {
             return {
-              items: state.items.map((item) =>
-                item.title === product.title
-                  ? { ...item, quantity: item.quantity + 1 }
-                  : item
+              items: state.items.map((i) =>
+                i.title === item.title
+                  ? { ...i, quantity: i.quantity + 1 }
+                  : i
               ),
             };
           }
 
           return {
-            items: [...state.items, { ...product, quantity: 1 }],
+            items: [...state.items, { ...item, quantity: 1 }],
           };
         }),
 
@@ -50,7 +53,9 @@ export const useCartStore = create<CartStore>()(
       increaseQty: (index) =>
         set((state) => ({
           items: state.items.map((item, i) =>
-            i === index ? { ...item, quantity: item.quantity + 1 } : item
+            i === index
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
           ),
         })),
 
@@ -64,9 +69,14 @@ export const useCartStore = create<CartStore>()(
             )
             .filter((item) => item.quantity > 0),
         })),
+
+      clearCart: () =>
+        set({
+          items: [],
+        }),
     }),
     {
-      name: "cart-storage", // localStorage key
+      name: "cart-storage",
     }
   )
 );
