@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCartStore } from "../../store/cartStore";
 import ProtectedRoute from "../../components/auth/ProtectedRoute";
 
@@ -9,7 +10,9 @@ export default function CartPage() {
   const increaseQty = useCartStore((state) => state.increaseQty);
   const decreaseQty = useCartStore((state) => state.decreaseQty);
 
-  const total = items.reduce(
+  const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
+
+  const totalPrice = items.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0,
   );
@@ -23,22 +26,28 @@ export default function CartPage() {
             <h1 className="text-2xl font-bold mb-4">Shopping Cart</h1>
 
             {items.length === 0 ? (
-              <p>Your cart is empty</p>
+              <div className="text-center py-10">
+                <p className="mb-4 text-gray-600">Your cart is empty 🛒</p>
+                <Link href="/" className="text-blue-600 hover:underline">
+                  Go back to shopping
+                </Link>
+              </div>
             ) : (
               <div className="space-y-4">
                 {items.map((item, i) => (
                   <div
                     key={i}
-                    className="flex justify-between items-center border-b pb-3"
+                    className="flex justify-between items-center border-b pb-4"
                   >
+                    {/* LEFT INFO */}
                     <div>
-                      <p>{item.title}</p>
+                      <p className="font-medium">{item.title}</p>
 
                       {/* QUANTITY */}
                       <div className="flex items-center gap-2 mt-2">
                         <button
                           onClick={() => decreaseQty(i)}
-                          className="px-2 bg-gray-200"
+                          className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
                         >
                           -
                         </button>
@@ -47,12 +56,13 @@ export default function CartPage() {
 
                         <button
                           onClick={() => increaseQty(i)}
-                          className="px-2 bg-gray-200"
+                          className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
                         >
                           +
                         </button>
                       </div>
 
+                      {/* REMOVE */}
                       <button
                         onClick={() => removeFromCart(i)}
                         className="text-red-500 text-sm mt-2 hover:underline"
@@ -61,6 +71,7 @@ export default function CartPage() {
                       </button>
                     </div>
 
+                    {/* PRICE */}
                     <p className="font-semibold">
                       ${item.price * item.quantity}
                     </p>
@@ -75,12 +86,17 @@ export default function CartPage() {
             <h2 className="text-lg font-bold mb-4">Subtotal</h2>
 
             <p className="mb-4">
-              {items.length} items — <span className="font-bold">${total}</span>
+              {totalItems} items —{" "}
+              <span className="font-bold">${totalPrice}</span>
             </p>
 
-            <button className="w-full bg-yellow-400 py-2 rounded font-semibold">
-              Proceed to Checkout
-            </button>
+            {items.length > 0 && (
+              <Link href="/checkout">
+                <button className="w-full bg-yellow-400 hover:bg-yellow-500 py-2 rounded font-semibold">
+                  Proceed to Checkout
+                </button>
+              </Link>
+            )}
           </div>
         </div>
       </div>
