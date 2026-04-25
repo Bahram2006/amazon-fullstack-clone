@@ -7,7 +7,11 @@ import { useAuthStore } from "../../store/authStore";
 
 export default function Navbar() {
   const items = useCartStore((state) => state.items);
-  const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
+
+  const totalItems = items.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  );
 
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
@@ -17,7 +21,7 @@ export default function Navbar() {
       {/* TOP NAV */}
       <div className="bg-[#131921] text-white">
         <div className="max-w-[1400px] mx-auto flex items-center gap-4 px-4 py-3">
-          
+
           {/* LOGO */}
           <Link href="/" className="text-2xl font-bold hover:opacity-80">
             Amazon
@@ -37,8 +41,8 @@ export default function Navbar() {
 
           {/* RIGHT */}
           <div className="flex items-center gap-6 text-sm">
-            
-            {/* AUTH SECTION */}
+
+            {/* AUTH */}
             {user ? (
               <div
                 onClick={logout}
@@ -57,11 +61,14 @@ export default function Navbar() {
               </Link>
             )}
 
-            {/* ORDERS */}
-            <div className="cursor-pointer leading-tight hover:opacity-80">
+            {/* ORDERS (FIXED) */}
+            <Link
+              href="/orders"
+              className="leading-tight hover:opacity-80"
+            >
               <p className="text-xs">Returns</p>
               <p className="font-bold">& Orders</p>
-            </div>
+            </Link>
 
             {/* CART */}
             <Link
