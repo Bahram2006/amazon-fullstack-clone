@@ -2,13 +2,23 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useAuthStore } from "../../../store/authStore";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const login = useAuthStore((state) => state.login);
+  const router = useRouter();
+
   const handleRegister = () => {
-    console.log("Register:", email, password);
+    if (!email || !password) return;
+
+    // fake register → direkt login
+    login(email);
+
+    router.push("/");
   };
 
   return (
