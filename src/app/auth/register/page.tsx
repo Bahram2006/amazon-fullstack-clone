@@ -15,7 +15,7 @@ export default function RegisterPage() {
   const handleRegister = () => {
     if (!email || !password) return;
 
-    // fake register → direkt login
+    // fake register → login
     login(email);
 
     router.push("/");
