@@ -16,7 +16,7 @@ type CartStore = {
   increaseQty: (index: number) => void;
   decreaseQty: (index: number) => void;
 
-  clearCart: () => void; // ✅ goşduk
+  clearCart: () => void;
 };
 
 export const useCartStore = create<CartStore>()(
